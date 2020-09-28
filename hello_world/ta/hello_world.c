@@ -25,44 +25,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <err.h>
-#include <stdio.h>
-#include <string.h>
+#include "hello_world_t.h"
 
-#include "teec_enclave.h"
-#include "hello_world_u.h"
-
-void do_ocall_string (char* buffer, int len) {
-
+int inc_value(int a)
+{
+	return a + 1;
 }
 
-int main(void)
-{
-	int token = 0;
-	int updated = 0;
-	tee_id_t eid;
-
-	if (sgx_create_enclave("", 1, &token, &updated, &eid, NULL) != TEEC_SUCCESS) {
-		printf("error\n");
-		return -1;
-	}
+void do_string(char* buffer, int len) {
 	
-	int value = 0;
-	int ret;
-	if (ret = inc_value(eid, &value, 20) != TEEC_SUCCESS) {
-		printf("error in ecall\n");
-		return -1;
-	}
-
-	char hello[100];
-	memcpy(hello, "hello world\n", strlen("hello world\n"));
-
-	if (ret = do_string(eid, hello, strlen(hello)) != TEEC_SUCCESS) {
-		printf("error in ecall\n");
-		return -1;
-	}
-
-	sgx_close_enclave(eid);
-
-	return 0;
 }
