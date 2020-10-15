@@ -18,6 +18,7 @@ extern "C" {
 #endif
 
 void do_ocall_string (char* buffer, int len);
+int do_inc ();
 
 TEEC_Result inc_value(tee_id_t eid, int* retval, int a);
 TEEC_Result do_string(tee_id_t eid, char* buffer, int len);

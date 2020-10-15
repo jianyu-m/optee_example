@@ -19,7 +19,7 @@ TEEC_Result sgx_create_enclave(char* name, int debug_flag, int* token, int *upda
 
 void sgx_close_enclave(tee_id_t id);
 
-void ocall_add(char* ocall_buffer, void* ocall_table);
+void ocall_add(char* ocall_buffer, void** ocall_table);
 
 void ocall_del(char* ocall_buffer);
 

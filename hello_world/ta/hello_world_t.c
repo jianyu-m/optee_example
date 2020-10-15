@@ -45,6 +45,10 @@ typedef struct ms_do_ocall_string_t {
 	int ms_len;
 } ms_do_ocall_string_t;
 
+typedef struct ms_do_inc_t {
+	int ms_retval;
+} ms_do_inc_t;
+
 static TEE_Result tee_inc_value(uint32_t param_types,
 	TEE_Param params[4])
 {
@@ -107,10 +111,11 @@ const struct {
 
 const struct {
 	size_t nr_ocall;
-	uint8_t entry_table[1][2];
+	uint8_t entry_table[2][2];
 } g_dyn_entry_table = {
-	1,
+	2,
 	{
+		{0, 0, },
 		{0, 0, },
 	}
 };
@@ -123,7 +128,7 @@ TEE_Result do_ocall_string(char* buffer, int len)
 
 	ms_do_ocall_string_t* ms = NULL;
 	size_t ocalloc_size = sizeof(ms_do_ocall_string_t);
-	void *__tmp = NULL;
+	void *buffer_start = NULL;
 	int* ocall_id;
 	char* ocall_status;
 
@@ -131,29 +136,53 @@ TEE_Result do_ocall_string(char* buffer, int len)
 
 	ocall_status = ocall_param.memref.buffer;
 	ocall_id = ocall_param.memref.buffer + sizeof(char);
-	__tmp = ocall_param.memref.buffer + sizeof(int) + sizeof(char);
-	if (__tmp == NULL) {
-		return TEE_ERROR_BAD_STATE;
-	}
-	ms = (ms_do_ocall_string_t*)__tmp;
-	__tmp = (void *)((size_t)__tmp + sizeof(ms_do_ocall_string_t));
+	buffer_start = ocall_param.memref.buffer + sizeof(int) + sizeof(char);
+	ms = (ms_do_ocall_string_t*)buffer_start;
+	buffer_start += sizeof(ms_do_ocall_string_t);
 
 	if (buffer != NULL) {
-		ms->ms_buffer = (char*)__tmp;
-		__tmp = (void *)((size_t)__tmp + _len_buffer);
-		memcpy(ms->ms_buffer, buffer, _len_buffer);
+		ms->ms_buffer = (char*)buffer_start;
+		memcpy(buffer_start, buffer, _len_buffer);
 	} else if (buffer == NULL) {
 		ms->ms_buffer = NULL;
 	} else {
 		return TEE_ERROR_BAD_PARAMETERS;
 	}
 	
-	ms->ms_len = len;
 	*ocall_id = 0;
 	status = tee_ocall(ocall_status);
 
+	if (buffer) memcpy((void*)buffer, buffer_start, _len_buffer);
+
 	return status;
 }
+
+TEE_Result do_inc(int* retval)
+{
+	TEE_Result status = TEE_SUCCESS;
+
+	ms_do_inc_t* ms = NULL;
+	size_t ocalloc_size = sizeof(ms_do_inc_t);
+	void *buffer_start = NULL;
+	int* ocall_id;
+	char* ocall_status;
+
+
+	ocall_status = ocall_param.memref.buffer;
+	ocall_id = ocall_param.memref.buffer + sizeof(char);
+	buffer_start = ocall_param.memref.buffer + sizeof(int) + sizeof(char);
+	ms = (ms_do_inc_t*)buffer_start;
+	buffer_start += sizeof(ms_do_inc_t);
+
+	
+	*ocall_id = 1;
+	status = tee_ocall(ocall_status);
+
+	if (retval) *retval = ms->ms_retval;
+
+	return status;
+}
+
 
 TEE_Result TA_InvokeCommandEntryPoint(void __maybe_unused *sess_ctx,
 	uint32_t cmd_id,

@@ -33,7 +33,11 @@
 #include "hello_world_u.h"
 
 void do_ocall_string (char* buffer, int len) {
+	buffer[1] = 'g';
+}
 
+int do_inc() {
+	return 5;
 }
 
 int main(void)
@@ -54,13 +58,17 @@ int main(void)
 		return -1;
 	}
 
-	char hello[100];
-	memcpy(hello, "hello world\n", strlen("hello world\n"));
+	printf("return from inc_value %d\n", value);
 
-	if (ret = do_string(eid, hello, strlen(hello)) != TEEC_SUCCESS) {
+	char hello[100];
+	memcpy(hello, "hello world\n", strlen("hello world\n") + 1);
+
+	if (ret = do_string(eid, hello, strlen(hello) + 1) != TEEC_SUCCESS) {
 		printf("error in ecall\n");
 		return -1;
 	}
+
+	printf("return %s\n", hello);
 
 	sgx_close_enclave(eid);
 

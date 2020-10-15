@@ -29,9 +29,12 @@
 
 int inc_value(int a)
 {
-	return a + 1;
+	int ret;
+	do_inc(&ret);
+	return a + 1 + ret;
 }
 
 void do_string(char* buffer, int len) {
-	
+	buffer[0] = 'c';
+	do_ocall_string(buffer, len);
 }

@@ -1,5 +1,8 @@
 
 #include "teec_enclave.h"
+#include <stdio.h>
+#include <pthread.h>
+#include <malloc.h>
 
 TEEC_Context ctx;
 TEEC_Session sess;
@@ -9,6 +12,8 @@ TEEC_UUID uuid = { 0x8aaaf200, 0x2450, 0x11e4, \
 tee_id_t eid;
 
 tee_id_t global_eid = 0;
+
+typedef TEEC_Result (*ocall_func_entry) (void* pms);
 
 TEEC_Result sgx_create_enclave(char* name, int debug_flag, int* token, int *updated, tee_id_t *eid, void *unused) {
     
@@ -38,10 +43,46 @@ void sgx_close_enclave(tee_id_t id) {
 	TEEC_FinalizeContext(&ctx);
 }
 
-void ocall_add(char* ocall_buffer, void* ocall_table) {
-	
+typedef struct thread_data_t {
+	char *buffer;
+	void **ocall_table;
+} thread_data;
+
+void * thread_func(void * arg)
+{
+	thread_data *td = (thread_data*)arg;
+    char* buffer = td->buffer;
+	volatile char *status = buffer;
+	int *ocall_idx_ptr = (int*)(buffer + sizeof(char));
+	void **ocall_table = (void**)td->ocall_table;
+	printf("ocall thread entered\n");
+	while (*status != 111) {
+		if (*status == 1) {
+			// if there are 
+			printf("ocall %d\n", *ocall_idx_ptr);
+			ocall_func_entry entry = (ocall_func_entry) ocall_table[*ocall_idx_ptr];
+			TEEC_Result r = (*entry)(buffer + sizeof(char) + sizeof(int));
+			*status = (char)r;
+		}
+	}
+	printf("ocall thread exited\n");
+	return NULL;
+}
+
+void ocall_add(char* ocall_buffer, void** ocall_table) {
+	thread_data *td = (thread_data*)malloc(sizeof(thread_data));
+	td->buffer = ocall_buffer;
+	td->ocall_table = ocall_table;
+	pthread_t thd_idx;
+	// Create a thread that will function threadFunc()
+	int err = pthread_create(&thd_idx, NULL, &thread_func, td);
+	if (err) {
+		printf("error in creating ocall thread\n");
+	}
 }
 
 void ocall_del(char* ocall_buffer) {
-
+	volatile char *status = ocall_buffer;
+	// stop the ocall thread
+	*status = 111;
 }

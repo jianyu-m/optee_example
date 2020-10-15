@@ -20,6 +20,7 @@ int inc_value(int a);
 void do_string(char* buffer, int len);
 
 TEE_Result do_ocall_string(char* buffer, int len);
+TEE_Result do_inc(int* retval);
 
 #ifdef __cplusplus
 }
