@@ -1,7 +1,9 @@
 #include "hello_world_t.h"
 
 #include "tee_internal_api.h"
-#include "tee_internal_api_extensions.h"
+#include "tee_ext_api.h"
+#include "tee_log.h"
+#include "securec.h"
 #include "tee_enclave.h"
 #include <string.h> /* for memcpy etc */
 #include <stdlib.h> /* for malloc/free etc */
@@ -10,13 +12,16 @@ typedef TEE_Result (*ecall_invoke_entry) (uint32_t, TEE_Param[4]);
 
 TEE_Param ocall_param;
 
-TEE_Result TA_CreateEntryPoint(void) { return TEE_SUCCESS; }
+TEE_Result TA_CreateEntryPoint(void) {
+	addcaller_ca_exec("/vendor/bin/test_ca", "root");
+	addcaller_ca_exec("/vendor/bin/teec_hello", "root");
+return TEE_SUCCESS; }
 
 void TA_DestroyEntryPoint(void) {}
 
 TEE_Result TA_OpenSessionEntryPoint(uint32_t param_types,
-	TEE_Param __maybe_unused params[4],
-	void __maybe_unused **sess_ctx) {
+	TEE_Param params[4],
+	void **sess_ctx) {
 	/* Unused parameters */
 	(void)&param_types;
 	(void)&params;
@@ -24,7 +29,7 @@ TEE_Result TA_OpenSessionEntryPoint(uint32_t param_types,
 	return TEE_SUCCESS;
 }
 
-void TA_CloseSessionEntryPoint(void __maybe_unused *sess_ctx) { 
+void TA_CloseSessionEntryPoint(void *sess_ctx) { 
 	(void)&sess_ctx; /* Unused parameter */ 
 } 
 
@@ -184,7 +189,7 @@ TEE_Result do_inc(int* retval)
 }
 
 
-TEE_Result TA_InvokeCommandEntryPoint(void __maybe_unused *sess_ctx,
+TEE_Result TA_InvokeCommandEntryPoint(void *sess_ctx,
 	uint32_t cmd_id,
 	uint32_t param_types, TEE_Param params[4])
 {

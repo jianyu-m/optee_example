@@ -77,6 +77,7 @@ TEEC_Result inc_value(tee_id_t eid, int* retval, int a)
 	ms->ms_a = a;
 	
 	memset(&op, 0, sizeof(op));
+	op.started = 1;
 	op.paramTypes = TEEC_PARAM_TYPES(TEEC_MEMREF_WHOLE, TEEC_MEMREF_WHOLE, TEEC_NONE, TEEC_NONE);
 	op.params[0].memref.parent = &input_sm;
 	op.params[0].memref.offset = 0;
@@ -124,6 +125,7 @@ TEEC_Result do_string(tee_id_t eid, char* buffer, int len)
 	ms->ms_len = len;
 	
 	memset(&op, 0, sizeof(op));
+	op.started = 1;
 	op.paramTypes = TEEC_PARAM_TYPES(TEEC_MEMREF_WHOLE, TEEC_MEMREF_WHOLE, TEEC_NONE, TEEC_NONE);
 	op.params[0].memref.parent = &input_sm;
 	op.params[0].memref.offset = 0;

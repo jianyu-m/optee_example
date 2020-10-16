@@ -19,6 +19,17 @@ TEEC_Result sgx_create_enclave(char* name, int debug_flag, int* token, int *upda
     
     uint32_t err_origin;
 
+    TEEC_Operation operation;
+
+    /*MUST use TEEC_LOGIN_IDENTIFY method*/
+    memset(&operation, sizeof(operation), 0x00);
+    operation.started = 1;
+    operation.paramTypes = TEEC_PARAM_TYPES(
+            TEEC_NONE,
+            TEEC_NONE,
+            TEEC_MEMREF_TEMP_INPUT,
+            TEEC_MEMREF_TEMP_INPUT);
+
     TEEC_Result res = TEEC_InitializeContext(NULL, &ctx);
 	if (res != TEEC_SUCCESS)
 		errx(1, "TEEC_InitializeContext failed with code 0x%x", res);
@@ -28,7 +39,7 @@ TEEC_Result sgx_create_enclave(char* name, int debug_flag, int* token, int *upda
 	 * world!" in the log when the session is created.
 	 */
 	res = TEEC_OpenSession(&ctx, &sess, &uuid,
-			       TEEC_LOGIN_PUBLIC, NULL, NULL, &err_origin);
+			       TEEC_LOGIN_IDENTIFY, NULL, &operation, &err_origin);
 	if (res != TEEC_SUCCESS)
 		errx(1, "TEEC_Opensession failed with code 0x%x origin 0x%x",
 			res, err_origin);
