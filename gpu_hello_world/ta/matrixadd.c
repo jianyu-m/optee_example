@@ -313,19 +313,10 @@ int gdev_test_matrixadd(uint32_t *a, uint32_t *b, uint32_t *c, int n)
 	gmemcpy_to_device(handle, a_addr, a, a_size);
 	gmemcpy_to_device(handle, b_addr, b, b_size);
 	
-	// glaunch(handle, &k, &id);
-	// gsync(handle, id, NULL);
+	glaunch(handle, &k, &id);
+	gsync(handle, id, NULL);
 	
-	gmemcpy_from_device(handle, c, b_addr, c_size);
-
-	gfree(handle, a_addr);
-	gfree(handle, b_addr);
-	gfree(handle, c_addr);
-	gfree(handle, k.code_addr);
-	gfree(handle, k.cmem[0].addr);
-	gfree(handle, k.lmem_addr);
-	
-	gclose(handle);
+	gmemcpy_from_device(handle, c, c_addr, c_size);
 
 	i = j = idx = 0;
 	for (i = 0;i < n;i++) {
@@ -339,6 +330,15 @@ int gdev_test_matrixadd(uint32_t *a, uint32_t *b, uint32_t *c, int n)
 			}
 		}
 	}
+
+	gfree(handle, a_addr);
+	gfree(handle, b_addr);
+	gfree(handle, c_addr);
+	gfree(handle, k.code_addr);
+	gfree(handle, k.cmem[0].addr);
+	gfree(handle, k.lmem_addr);
+	
+	gclose(handle);
 
 	return 0;
 }
