@@ -32,7 +32,7 @@
 
 #include <sys/mman.h>
 #include <string.h>
-
+extern int compute();
 /*
  * Called when the instance of the TA is created. This is the first call in
  * the TA.
@@ -107,18 +107,11 @@ static TEE_Result inc_value(uint32_t param_types,
 
 	DMSG("has been called");
 
-	char* buf = mmap(NULL, 0x8000, PROT_READ | PROT_WRITE, 0, 0, 0);
-	memcpy(buf, "hello!\n", strlen("hello!\n") + 1);
-	fprintf(stderr, buf);
-
-	munmap(buf, 0x8000);
-
 	if (param_types != exp_param_types)
 		return TEE_ERROR_BAD_PARAMETERS;
 
 	IMSG("Got value: %u from NW", params[0].value.a);
-	params[0].value.a++;
-	IMSG("Increase value to: %u", params[0].value.a);
+	params[0].value.a = compute();
 
 	return TEE_SUCCESS;
 }

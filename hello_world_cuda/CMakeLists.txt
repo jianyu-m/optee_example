@@ -1,4 +1,4 @@
-project (cronus_gpu C)
+project (cronus_cuda C)
 
 set (SRC host/main.c)
 
