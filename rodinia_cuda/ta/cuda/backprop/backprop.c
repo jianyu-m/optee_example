@@ -12,6 +12,8 @@
 #include <stdlib.h>
 #include "backprop.h"
 #include <math.h>
+#include <fcntl.h>
+#include <unistd.h>
 //#define OPEN
 
 #define ABS(x)          (((x) > 0.0) ? (x) : (-(x)))
@@ -280,9 +282,9 @@ void bpnn_hidden_error(delta_h,
 					   delta_o, 
 					   no, 
 					   who, 
-					   hidden, 
+					   hid, 
 					   err)
-float *delta_h, *delta_o, *hidden, **who, *err;
+float *delta_h, *delta_o, *hid, **who, *err;
 int nh, no;
 {
   int j, k;
@@ -290,7 +292,7 @@ int nh, no;
 
   errsum = 0.0;
   for (j = 1; j <= nh; j++) {
-    h = hidden[j];
+    h = hid[j];
     sum = 0.0;
     for (k = 1; k <= no; k++) {
       sum += delta_o[k] * who[j][k];

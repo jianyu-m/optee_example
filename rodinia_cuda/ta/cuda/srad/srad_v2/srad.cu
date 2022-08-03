@@ -12,8 +12,8 @@
 #include "srad_kernel.cu"
 
 void random_matrix(float *I, int rows, int cols);
-void runTest( int argc, char** argv);
-void usage(int argc, char **argv)
+void srad_runTest( int argc, char** argv);
+void srad_usage(int argc, char **argv)
 {
 	fprintf(stderr, "Usage: %s <rows> <cols> <y1> <y2> <x1> <x2> <lamda> <no. of iter>\n", argv[0]);
 	fprintf(stderr, "\t<rows>   - number of rows\n");
@@ -30,18 +30,18 @@ void usage(int argc, char **argv)
 ////////////////////////////////////////////////////////////////////////////////
 // Program main
 ////////////////////////////////////////////////////////////////////////////////
-int
-main( int argc, char** argv) 
+extern "C" int
+srad_main( int argc, char** argv) 
 {
-  printf("WG size of kernel = %d X %d\n", BLOCK_SIZE, BLOCK_SIZE);
-    runTest( argc, argv);
+    printf("WG size of kernel = %d X %d\n", BLOCK_SIZE, BLOCK_SIZE);
+    srad_runTest( argc, argv);
 
     return EXIT_SUCCESS;
 }
 
 
 void
-runTest( int argc, char** argv) 
+srad_runTest( int argc, char** argv) 
 {
     int rows, cols, size_I, size_R, niter = 10, iter;
     float *I, *J, lambda, q0sqr, sum, sum2, tmp, meanROI,varROI ;
@@ -83,7 +83,7 @@ runTest( int argc, char** argv)
 		
 	}
     else{
-	usage(argc, argv);
+		srad_usage(argc, argv);
     }
 
 

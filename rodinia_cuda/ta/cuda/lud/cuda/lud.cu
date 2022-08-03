@@ -23,7 +23,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include "common.h"
+#include "../common/common.h"
 
 #ifdef RD_WG_SIZE_0_0
         #define BLOCK_SIZE RD_WG_SIZE_0_0
@@ -49,8 +49,8 @@ extern void
 lud_cuda(float *d_m, int matrix_dim);
 
 
-int
-main ( int argc, char *argv[] )
+extern "C" int
+lud_main( int argc, char *argv[] )
 {
   printf("WG size of kernel = %d X %d\n", BLOCK_SIZE, BLOCK_SIZE);
 

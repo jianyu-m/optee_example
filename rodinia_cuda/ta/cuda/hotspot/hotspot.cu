@@ -31,7 +31,7 @@ float chip_width = 0.016;
 /* ambient temperature, assuming no package at all	*/
 float amb_temp = 80.0;
 
-void run(int argc, char** argv);
+void hotspot_run(int argc, char** argv);
 
 /* define timer macros */
 #define pin_stats_reset()   startCycle()
@@ -250,7 +250,7 @@ int compute_tran_temp(float *MatrixPower,float *MatrixTemp[2], int col, int row,
         return dst;
 }
 
-void usage(int argc, char **argv)
+void hotspot_usage(int argc, char **argv)
 {
 	fprintf(stderr, "Usage: %s <grid_rows/grid_cols> <pyramid_height> <sim_time> <temp_file> <power_file> <output_file>\n", argv[0]);
 	fprintf(stderr, "\t<grid_rows/grid_cols>  - number of rows/cols in the grid (positive integer)\n");
@@ -262,16 +262,16 @@ void usage(int argc, char **argv)
 	exit(1);
 }
 
-int main(int argc, char** argv)
+extern "C" int hotspot_main(int argc, char** argv)
 {
   printf("WG size of kernel = %d X %d\n", BLOCK_SIZE, BLOCK_SIZE);
 
-    run(argc,argv);
+    hotspot_run(argc,argv);
 
     return EXIT_SUCCESS;
 }
 
-void run(int argc, char** argv)
+void hotspot_run(int argc, char** argv)
 {
     int size;
     int grid_rows,grid_cols;
@@ -282,12 +282,12 @@ void run(int argc, char** argv)
     int pyramid_height = 1; // number of iterations
 	
 	if (argc != 7)
-		usage(argc, argv);
+		hotspot_usage(argc, argv);
 	if((grid_rows = atoi(argv[1]))<=0||
 	   (grid_cols = atoi(argv[1]))<=0||
        (pyramid_height = atoi(argv[2]))<=0||
        (total_iterations = atoi(argv[3]))<=0)
-		usage(argc, argv);
+		hotspot_usage(argc, argv);
 		
 	tfile=argv[4];
     pfile=argv[5];

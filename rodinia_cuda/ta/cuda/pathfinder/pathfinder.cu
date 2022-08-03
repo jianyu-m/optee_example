@@ -10,7 +10,7 @@
 
 #define BENCH_PRINT
 
-void run(int argc, char** argv);
+void pathfinder_run(int argc, char** argv);
 
 int rows, cols;
 int* data;
@@ -19,53 +19,84 @@ int* result;
 #define M_SEED 9
 int pyramid_height;
 
-//#define BENCH_PRINT
+//#define BENCH_PRINT
+
 
 void
 init(int argc, char** argv)
 {
-	if(argc==4){
-		cols = atoi(argv[1]);
-		rows = atoi(argv[2]);
+	if(argc==4){
+
+		cols = atoi(argv[1]);
+
+		rows = atoi(argv[2]);
+
                 pyramid_height=atoi(argv[3]);
 	}else{
                 printf("Usage: dynproc row_len col_len pyramid_height\n");
                 exit(0);
         }
-	data = new int[rows*cols];
-	wall = new int*[rows];
-	for(int n=0; n<rows; n++)
-		wall[n]=data+cols*n;
-	result = new int[cols];
-	
-	int seed = M_SEED;
-	srand(seed);
-
-	for (int i = 0; i < rows; i++)
-    {
-        for (int j = 0; j < cols; j++)
-        {
-            wall[i][j] = rand() % 10;
-        }
-    }
-#ifdef BENCH_PRINT
-    for (int i = 0; i < rows; i++)
-    {
-        for (int j = 0; j < cols; j++)
-        {
-            printf("%d ",wall[i][j]) ;
-        }
-        printf("\n") ;
-    }
+	data = new int[rows*cols];
+
+	wall = new int*[rows];
+
+	for(int n=0; n<rows; n++)
+
+		wall[n]=data+cols*n;
+
+	result = new int[cols];
+
+	
+
+	int seed = M_SEED;
+
+	srand(seed);
+
+
+
+	for (int i = 0; i < rows; i++)
+
+    {
+
+        for (int j = 0; j < cols; j++)
+
+        {
+
+            wall[i][j] = rand() % 10;
+
+        }
+
+    }
+
+#ifdef BENCH_PRINT
+
+    for (int i = 0; i < rows; i++)
+
+    {
+
+        for (int j = 0; j < cols; j++)
+
+        {
+
+            printf("%d ",wall[i][j]) ;
+
+        }
+
+        printf("\n") ;
+
+    }
+
 #endif
 }
 
+/*
 void 
 fatal(char *s)
 {
 	fprintf(stderr, "error: %s\n", s);
 
 }
+*/
 
 #define IN_RANGE(x, min, max)   ((x)>=(min) && (x)<=(max))
 #define CLAMP_RANGE(x, min, max) x = (x<(min)) ? min : ((x>(max)) ? max : x )
@@ -175,18 +206,18 @@ int calc_path(int *gpuWall, int *gpuResult[2], int rows, int cols, \
         return dst;
 }
 
-int main(int argc, char** argv)
+extern "C" int pathfinder_main(int argc, char** argv)
 {
     int num_devices;
     cudaGetDeviceCount(&num_devices);
     if (num_devices > 1) cudaSetDevice(DEVICE);
 
-    run(argc,argv);
+    pathfinder_run(argc,argv);
 
     return EXIT_SUCCESS;
 }
 
-void run(int argc, char** argv)
+void pathfinder_run(int argc, char** argv)
 {
     init(argc, argv);
 
@@ -214,13 +245,20 @@ void run(int argc, char** argv)
     cudaMemcpy(result, gpuResult[final_ret], sizeof(int)*cols, cudaMemcpyDeviceToHost);
 
 
-#ifdef BENCH_PRINT
-    for (int i = 0; i < cols; i++)
-            printf("%d ",data[i]) ;
-    printf("\n") ;
-    for (int i = 0; i < cols; i++)
-            printf("%d ",result[i]) ;
-    printf("\n") ;
+#ifdef BENCH_PRINT
+
+    for (int i = 0; i < cols; i++)
+
+            printf("%d ",data[i]) ;
+
+    printf("\n") ;
+
+    for (int i = 0; i < cols; i++)
+
+            printf("%d ",result[i]) ;
+
+    printf("\n") ;
+
 #endif
 
 

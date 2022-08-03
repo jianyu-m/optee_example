@@ -61,7 +61,12 @@ __global__ void euclid(LatLong *d_locations, float *d_distances, int numRecords,
 * This program finds the k-nearest neighbors
 **/
 
-int main(int argc, char* argv[])
+void cudaMemGetInfo(size_t *freeDeviceMemory, size_t *totalDeviceMemory) {
+  *freeDeviceMemory = 4 * 1024 * 1024;
+  *totalDeviceMemory = 4 * 1024 * 1024;
+}
+
+extern "C" int nn_main(int argc, char* argv[])
 {
 	int    i=0;
 	float lat, lng;

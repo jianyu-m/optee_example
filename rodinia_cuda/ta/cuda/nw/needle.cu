@@ -12,7 +12,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 // declaration, forward
-void runTest( int argc, char** argv);
+void needle_runTest( int argc, char** argv);
 
 
 int blosum62[24][24] = {
@@ -42,27 +42,29 @@ int blosum62[24][24] = {
 {-4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4,  1}
 };
 
+/*
 double gettime() {
   struct timeval t;
   gettimeofday(&t,NULL);
   return t.tv_sec+t.tv_usec*1e-6;
 }
+*/
 
 ////////////////////////////////////////////////////////////////////////////////
 // Program main
 ////////////////////////////////////////////////////////////////////////////////
-int
-main( int argc, char** argv) 
+extern "C" int
+nw_main( int argc, char** argv) 
 {
 
   printf("WG size of kernel = %d \n", BLOCK_SIZE);
 
-    runTest( argc, argv);
+    needle_runTest( argc, argv);
 
     return EXIT_SUCCESS;
 }
 
-void usage(int argc, char **argv)
+void needle_usage(int argc, char **argv)
 {
 	fprintf(stderr, "Usage: %s <max_rows/max_cols> <penalty> \n", argv[0]);
 	fprintf(stderr, "\t<dimension>  - x and y dimensions\n");
@@ -70,7 +72,7 @@ void usage(int argc, char **argv)
 	exit(1);
 }
 
-void runTest( int argc, char** argv) 
+void needle_runTest( int argc, char** argv) 
 {
     int max_rows, max_cols, penalty;
     int *input_itemsets, *output_itemsets, *referrence;
@@ -87,7 +89,7 @@ void runTest( int argc, char** argv)
 		penalty = atoi(argv[2]);
 	}
     else{
-	usage(argc, argv);
+		needle_usage(argc, argv);
     }
 	
 	if(atoi(argv[1])%16!=0){

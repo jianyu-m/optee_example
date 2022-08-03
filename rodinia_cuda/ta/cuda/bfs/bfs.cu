@@ -21,7 +21,7 @@
 #include <math.h>
 #include <cuda.h>
 
-#define MAX_THREADS_PER_BLOCK 512
+#define MAX_THREADS_PER_BLOCK 256
 
 int no_of_nodes;
 int edge_list_size;
@@ -42,7 +42,7 @@ void BFSGraph(int argc, char** argv);
 ////////////////////////////////////////////////////////////////////////////////
 // Main Program
 ////////////////////////////////////////////////////////////////////////////////
-int main( int argc, char** argv) 
+extern "C" int bfs_main( int argc, char** argv) 
 {
 	no_of_nodes=0;
 	edge_list_size=0;
@@ -62,8 +62,8 @@ void BFSGraph( int argc, char** argv)
 
     char *input_f;
 	if(argc!=2){
-	Usage(argc, argv);
-	exit(0);
+		Usage(argc, argv);
+		return;
 	}
 	
 	input_f = argv[1];
@@ -185,13 +185,13 @@ void BFSGraph( int argc, char** argv)
 	do
 	{
 		//if no thread changes this value then the loop stops
-		stop=false;
+		stop = false;
 		cudaMemcpy( d_over, &stop, sizeof(bool), cudaMemcpyHostToDevice) ;
-		Kernel<<< grid, threads, 0 >>>( d_graph_nodes, d_graph_edges, d_graph_mask, d_updating_graph_mask, d_graph_visited, d_cost, no_of_nodes);
+		Kernel <<< grid, threads >>> ( d_graph_nodes, d_graph_edges, d_graph_mask, d_updating_graph_mask, d_graph_visited, d_cost, no_of_nodes);
 		// check if kernel execution generated and error
 		
 
-		Kernel2<<< grid, threads, 0 >>>( d_graph_mask, d_updating_graph_mask, d_graph_visited, d_over, no_of_nodes);
+		Kernel2 <<< grid, threads >>> (d_graph_mask, d_updating_graph_mask, d_graph_visited, d_over, no_of_nodes);
 		// check if kernel execution generated and error
 		
 
@@ -201,17 +201,19 @@ void BFSGraph( int argc, char** argv)
 	while(stop);
 
 
-	printf("Kernel Executed %d times\n",k);
+	fprintf(stderr, "Kernel Executed %d times\n",k);
 
 	// copy result from device to host
 	cudaMemcpy( h_cost, d_cost, sizeof(int)*no_of_nodes, cudaMemcpyDeviceToHost) ;
 
 	//Store the result into a file
 	FILE *fpo = fopen("result.txt","w");
-	for(int i=0;i<no_of_nodes;i++)
-		fprintf(fpo,"%d) cost:%d\n",i,h_cost[i]);
-	fclose(fpo);
-	printf("Result stored in result.txt\n");
+	if (fpo) {
+		for(int i = 0;i < no_of_nodes;i++)
+			fprintf(fpo,"%d) cost:%d\n",i,h_cost[i]);
+		fclose(fpo);
+	}
+	fprintf(stderr, "Result stored in result.txt\n");
 
 
 	// cleanup memory

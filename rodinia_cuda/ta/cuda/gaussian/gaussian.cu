@@ -44,7 +44,7 @@ int Size;
 float *a, *b, *finalVec;
 float *m;
 
-FILE *fp;
+FILE *gaussian_fp;
 
 void InitProblemOnce(char *filename);
 void InitPerRun();
@@ -89,7 +89,7 @@ create_matrix(float *m, int size){
 }
 
 
-int main(int argc, char *argv[])
+extern "C" int gaussian_main(int argc, char *argv[])
 {
   printf("WG size of kernel 1 = %d, WG size of kernel 2= %d X %d\n", MAXBLOCKSIZE, BLOCK_SIZE_XY, BLOCK_SIZE_XY);
     int verbose = 1;
@@ -248,9 +248,9 @@ void InitProblemOnce(char *filename)
 	//scanf("%s", filename);
 	//printf("The file name is: %s\n", filename);
 	
-	fp = fopen(filename, "r");
+	gaussian_fp = fopen(filename, "r");
 	
-	fscanf(fp, "%d", &Size);	
+	fscanf(gaussian_fp, "%d", &Size);	
 	 
 	a = (float *) malloc(Size * Size * sizeof(float));
 	 
@@ -409,7 +409,7 @@ void InitMat(float *ary, int nrow, int ncol)
 	
 	for (i=0; i<nrow; i++) {
 		for (j=0; j<ncol; j++) {
-			fscanf(fp, "%f",  ary+Size*i+j);
+			fscanf(gaussian_fp, "%f",  ary+Size*i+j);
 		}
 	}  
 }
@@ -441,7 +441,7 @@ void InitAry(float *ary, int ary_size)
 	int i;
 	
 	for (i=0; i<ary_size; i++) {
-		fscanf(fp, "%f",  &ary[i]);
+		fscanf(gaussian_fp, "%f",  &ary[i]);
 	}
 }  
 
