@@ -33,25 +33,12 @@
 #include <sys/mman.h>
 #include <string.h>
 
-extern int bp_main(int argc, char** argv);
-extern int bfs_main(int argc, char** argv);
 extern int gaussian_main(int argc, char** argv);
-extern int hotspot_main(int argc, char** argv);
-extern int nn_main(int argc, char** argv);
-extern int nw_main(int argc, char** argv);
-extern int pathfinder_main(int argc, char** argv);
-extern int srad_main(int argc, char** argv);
-extern int lud_main( int argc, char *argv[]);
 
 int compute(void) {
-	char* argv[] = {"bfs", "/rodinia/bfs/graph4096.txt"};
-	// bp_main(0, NULL);
-	bfs_main(sizeof(argv) / sizeof(char*), argv);
-	// gaussian_main(0, NULL);
-	// hotspot_main(0, NULL);
-	// nn_main(0, NULL);
-	// nw_main(0, NULL);
-	// srad_main(0, NULL);
+	// char* argv[] = {"gs", "-f", "/rodinia/gs/matrix1024.txt"};
+	char* argv[] = {"gs", "-s", "16"};
+	gaussian_main(sizeof(argv) / sizeof(char*), argv);
 }
 /*
  * Called when the instance of the TA is created. This is the first call in

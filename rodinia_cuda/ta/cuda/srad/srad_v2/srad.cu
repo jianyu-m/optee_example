@@ -11,6 +11,8 @@
 // includes, kernels
 #include "srad_kernel.cu"
 
+#define GPU
+
 void random_matrix(float *I, int rows, int cols);
 void srad_runTest( int argc, char** argv);
 void srad_usage(int argc, char **argv)

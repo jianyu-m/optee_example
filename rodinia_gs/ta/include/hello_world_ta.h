@@ -33,7 +33,7 @@
  * the ITU-T UUID generator at http://www.itu.int/ITU-T/asn1/uuid.html
  */
 #define TA_HELLO_WORLD_UUID \
-	{ 0xe8334c54, 0x1143, 0x11ed, \
+	{ 0x9a6d383e, 0x12df, 0x11ed, \
 		{ 0x86, 0x1d, 0x02, 0x42, 0xac, 0x12, 0x00, 0x02} }
 
 /* The function IDs implemented in this TA */

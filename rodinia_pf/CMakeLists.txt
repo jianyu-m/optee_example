@@ -1,4 +1,4 @@
-project (cronus_rodinia_bp C)
+project (cronus_rodinia_pf C)
 
 set (SRC host/main.c)
 

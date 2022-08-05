@@ -26,7 +26,7 @@
 #elif defined(RD_WG_SIZE)
         #define MAXBLOCKSIZE RD_WG_SIZE
 #else
-        #define MAXBLOCKSIZE 512
+        #define MAXBLOCKSIZE 256
 #endif
 
 //2D defines. Go from specific to general                                                
@@ -118,7 +118,7 @@ extern "C" int gaussian_main(int argc, char *argv[])
         printf("-0.85	-0.68	0.24	-0.53\n");	
         printf("\n");
         printf("0.7	0.0	-0.4	-0.5\n");
-        exit(0);
+        return 0;
     }
     
     //PrintDeviceProperties();
@@ -184,8 +184,8 @@ extern "C" int gaussian_main(int argc, char *argv[])
         printf("The final solution is: \n");
         PrintAry(finalVec,Size);
     }
-    printf("\nTime total (including memory transfers)\t%f sec\n", time_total * 1e-6);
-    printf("Time for CUDA kernels:\t%f sec\n",totalKernelTime * 1e-6);
+    fprintf(stderr, "\nTime total (including memory transfers)\t%f sec\n", time_total * 1e-6);
+    fprintf(stderr, "Time for CUDA kernels:\t%f sec\n",totalKernelTime * 1e-6);
     
     /*printf("%d,%d\n",size,time_total);
     fprintf(stderr,"%d,%d\n",size,time_total);*/
@@ -193,6 +193,7 @@ extern "C" int gaussian_main(int argc, char *argv[])
     free(m);
     free(a);
     free(b);
+	return 0;
 }
 /*------------------------------------------------------
  ** PrintDeviceProperties

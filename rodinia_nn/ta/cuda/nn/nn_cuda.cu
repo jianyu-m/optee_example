@@ -7,8 +7,8 @@
 #include <stdio.h>
 #include <sys/time.h>
 #include <float.h>
-#include <vector>
 #include "cuda.h"
+#include "nn.hpp"
 
 #define min( a, b )			a > b ? b : a
 #define ceilDiv( a, b )		( a + b - 1 ) / b
@@ -18,25 +18,11 @@
 #define DEFAULT_THREADS_PER_BLOCK 256
 
 #define MAX_ARGS 10
-#define REC_LENGTH 53 // size of a record in db
 #define LATITUDE_POS 28	// character position of the latitude value in each record
 #define OPEN 10000	// initial value of nearest neighbors
 
 
-typedef struct latLong
-{
-  float lat;
-  float lng;
-} LatLong;
-
-typedef struct record
-{
-  char recString[REC_LENGTH];
-  float distance;
-} Record;
-
-int loadData(char *filename,std::vector<Record> &records,std::vector<LatLong> &locations);
-void findLowest(std::vector<Record> &records,float *distances,int numRecords,int topN);
+void findLowest(Record *records,float *distances,int numRecords,int topN);
 void printUsage();
 int parseCommandline(int argc, char *argv[], char* filename,int *r,float *lat,float *lng,
                      int *q, int *t, int *p, int *d);
@@ -61,9 +47,10 @@ __global__ void euclid(LatLong *d_locations, float *d_distances, int numRecords,
 * This program finds the k-nearest neighbors
 **/
 
-void cudaMemGetInfo(size_t *freeDeviceMemory, size_t *totalDeviceMemory) {
+cudaError_t cudaMemGetInfo(size_t *freeDeviceMemory, size_t *totalDeviceMemory) {
   *freeDeviceMemory = 4 * 1024 * 1024;
   *totalDeviceMemory = 4 * 1024 * 1024;
+  return cudaSuccess;
 }
 
 extern "C" int nn_main(int argc, char* argv[])
@@ -72,8 +59,8 @@ extern "C" int nn_main(int argc, char* argv[])
 	float lat, lng;
 	int quiet=0,timing=0,platform=0,device=0;
 
-    std::vector<Record> records;
-	std::vector<LatLong> locations;
+    Record *records;
+	  LatLong *locations;
 	char filename[100];
 	int resultsCount=10;
 
@@ -84,7 +71,7 @@ extern "C" int nn_main(int argc, char* argv[])
       return 0;
     }
 
-    int numRecords = loadData(filename,records,locations);
+    int numRecords = loadData(filename, &records, &locations);
     if (resultsCount > numRecords) resultsCount = numRecords;
 
     //for(i=0;i<numRecords;i++)
@@ -168,64 +155,12 @@ extern "C" int nn_main(int argc, char* argv[])
     //Free memory
 	cudaFree(d_locations);
 	cudaFree(d_distances);
-
+  return 0;
 }
 
-int loadData(char *filename,std::vector<Record> &records,std::vector<LatLong> &locations){
-    FILE   *flist,*fp;
-	int    i=0;
-	char dbname[64];
-	int recNum=0;
+// extern int loadData(char *filename, Record **recs, LatLong **locs);
 
-    /**Main processing **/
-
-    flist = fopen(filename, "r");
-	while(!feof(flist)) {
-		/**
-		* Read in all records of length REC_LENGTH
-		* If this is the last file in the filelist, then done
-		* else open next file to be read next iteration
-		*/
-		if(fscanf(flist, "%s\n", dbname) != 1) {
-            fprintf(stderr, "error reading filelist\n");
-            exit(0);
-        }
-        fp = fopen(dbname, "r");
-        if(!fp) {
-            printf("error opening a db\n");
-            exit(1);
-        }
-        // read each record
-        while(!feof(fp)){
-            Record record;
-            LatLong latLong;
-            fgets(record.recString,49,fp);
-            fgetc(fp); // newline
-            if (feof(fp)) break;
-
-            // parse for lat and long
-            char substr[6];
-
-            for(i=0;i<5;i++) substr[i] = *(record.recString+i+28);
-            substr[5] = '\0';
-            latLong.lat = atof(substr);
-
-            for(i=0;i<5;i++) substr[i] = *(record.recString+i+33);
-            substr[5] = '\0';
-            latLong.lng = atof(substr);
-
-            locations.push_back(latLong);
-            records.push_back(record);
-            recNum++;
-        }
-        fclose(fp);
-    }
-    fclose(flist);
-//    for(i=0;i<rec_count*REC_LENGTH;i++) printf("%c",sandbox[i]);
-    return recNum;
-}
-
-void findLowest(std::vector<Record> &records,float *distances,int numRecords,int topN){
+void findLowest(Record *records,float *distances,int numRecords,int topN){
   int i,j;
   float val;
   int minLoc;

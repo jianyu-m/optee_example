@@ -8,7 +8,7 @@ srcs-y += hello_world_ta.c
 # srcs-y += cuda/backprop/backprop_cuda.cu
 # srcs-y += cuda/backprop/backprop_cuda_kernel.cu
 
-srcs-y += cuda/bfs/bfs.cu
+# srcs-y += cuda/bfs/bfs.cu
 # srcs-y += cuda/bfs/kernel.cu
 # srcs-y += cuda/bfs/kernel2.cu
 
@@ -24,7 +24,8 @@ srcs-y += cuda/bfs/bfs.cu
 # srcs-y += cuda/nw/needle.cu
 # srcs-y += cuda/nw/needle_kernel.cu
 
-# srcs-y += cuda/nn/nn_cuda.cu
+srcs-y += cuda/nn/nn_cuda.cu
+srcs-y += cuda/nn/nn_cpp.cpp
 
 # srcs-y += cuda/pathfinder/pathfinder.cu
 
