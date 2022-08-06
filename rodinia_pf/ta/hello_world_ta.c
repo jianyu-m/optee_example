@@ -34,10 +34,14 @@
 #include <string.h>
 
 extern int pathfinder_main(int argc, char** argv);
+const int ta_large_heap_size = 32 * 1024 * 1024;
+extern void malloc_add_pool(void *buf, size_t len);
 
 int compute(void) {
-	char* argv[] = {"bfs", "100000", "100", "20"};
+	char* argv[] = {"pf", "10000", "100", "20"};
 	// bp_main(0, NULL);
+	void* ta_large_heap = mmap(0, ta_large_heap_size, PROT_READ | PROT_WRITE, MAP_ANONYMOUS, 0, 0);
+	malloc_add_pool(ta_large_heap, ta_large_heap_size);
 	pathfinder_main(sizeof(argv) / sizeof(char*), argv);
 	// gaussian_main(0, NULL);
 	// hotspot_main(0, NULL);

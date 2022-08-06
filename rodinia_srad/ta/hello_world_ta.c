@@ -34,9 +34,13 @@
 #include <string.h>
 
 extern int srad_main(int argc, char** argv);
+const int ta_large_heap_size = 32 * 1024 * 1024;
+extern void malloc_add_pool(void *buf, size_t len);
 
 int compute(void) {
-	char* argv[] = {"srad", "2048", "2048", "0", "127", "0", "127", "0.5", "2"};
+	char* argv[] = {"srad", "1024", "1024", "0", "127", "0", "127", "0.5", "2"};
+	void* ta_large_heap = mmap(0, ta_large_heap_size, PROT_READ | PROT_WRITE, MAP_ANONYMOUS, 0, 0);
+	malloc_add_pool(ta_large_heap, ta_large_heap_size);	
 	srad_main(sizeof(argv) / sizeof(char*), argv);
 }
 /*

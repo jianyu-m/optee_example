@@ -35,9 +35,14 @@
 
 extern int lud_main( int argc, char *argv[]);
 
+const int ta_large_heap_size = 32 * 1024 * 1024;
+extern void malloc_add_pool(void *buf, size_t len);
+
 int compute(void) {
 	// cuda/lud_cuda -s 256 -v
 	char* argv[] = {"lud", "-i", "/rodinia/lud/2048.dat"};
+	void* ta_large_heap = mmap(0, ta_large_heap_size, PROT_READ | PROT_WRITE, MAP_ANONYMOUS, 0, 0);
+	malloc_add_pool(ta_large_heap, ta_large_heap_size);
 	lud_main(sizeof(argv) / sizeof(char*), argv);
 }
 /*

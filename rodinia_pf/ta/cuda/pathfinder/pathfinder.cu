@@ -8,7 +8,7 @@
 #define DEVICE 0
 #define HALO 1 // halo width along one direction when advancing to the next iteration
 
-#define BENCH_PRINT
+// #define BENCH_PRINT
 
 void pathfinder_run(int argc, char** argv);
 
@@ -208,10 +208,6 @@ int calc_path(int *gpuWall, int *gpuResult[2], int rows, int cols, \
 
 extern "C" int pathfinder_main(int argc, char** argv)
 {
-    int num_devices;
-    cudaGetDeviceCount(&num_devices);
-    if (num_devices > 1) cudaSetDevice(DEVICE);
-
     pathfinder_run(argc,argv);
 
     return EXIT_SUCCESS;

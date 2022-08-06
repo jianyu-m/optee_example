@@ -35,8 +35,16 @@
 
 extern int hotspot_main(int argc, char** argv);
 
+const int ta_large_heap_size = 32 * 1024 * 1024;
+
+extern void malloc_add_pool(void *buf, size_t len);
+
 int compute(void) {
-	char* argv[] = {"hs", "512", "2", "2", "/rodinia/data/hotspot/temp_512", "/rodinia/data/hotspot/power_512","output.out"};
+	char* argv[] = {"hs", "512", "2", "2", "/rodinia/hotspot/temp_512", "/rodinia/hotspot/power_512","output.out"};
+
+	void* ta_large_heap = mmap(0, ta_large_heap_size, PROT_READ | PROT_WRITE, MAP_ANONYMOUS, 0, 0);
+	malloc_add_pool(ta_large_heap, ta_large_heap_size);
+
 	hotspot_main(sizeof(argv) / sizeof(char*), argv);
 }
 /*

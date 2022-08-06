@@ -18,7 +18,7 @@ srcs-y += hello_world_ta.c
 
 srcs-y += cuda/lud/common/common.c
 
-srcs-y += cuda/lud/cuda/lud_kernel.cu
+# srcs-y += cuda/lud/cuda/lud_kernel.cu
 srcs-y += cuda/lud/cuda/lud.cu
 
 # srcs-y += cuda/nw/needle.cu

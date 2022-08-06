@@ -34,9 +34,13 @@
 #include <string.h>
 
 extern int nw_main(int argc, char** argv);
+const int ta_large_heap_size = 32 * 1024 * 1024;
+extern void malloc_add_pool(void *buf, size_t len);
 
 int compute(void) {
-	char* argv[] = {"bfs", "2048", "10"};
+	char* argv[] = {"nw", "1024", "10"};
+	void* ta_large_heap = mmap(0, ta_large_heap_size, PROT_READ | PROT_WRITE, MAP_ANONYMOUS, 0, 0);
+	malloc_add_pool(ta_large_heap, ta_large_heap_size);
 	nw_main(sizeof(argv) / sizeof(char*), argv);
 }
 /*
