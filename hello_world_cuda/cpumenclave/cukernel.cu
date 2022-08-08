@@ -41,12 +41,14 @@ extern "C" int compute() {
 	for (int i = 0;i < (N * N);i++) {
 		if (arrc[i] != arra[i] + arrb[i]) {
 			all_correct = 0;
-			printf("r[%d] is incorrect\n", i);
+			// printf("r[%d] is incorrect\n", i);
 		}
 	}
 
 	if (all_correct) {
-		printf("all r[i] is correct\n");
+		fprintf(stderr, "all r[i] is correct\n");
+	} else {
+		fprintf(stderr, "some r[i] are incorrect\n");
 	}
 
 	cudaFree(darra);

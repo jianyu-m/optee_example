@@ -35,13 +35,17 @@
 /* For the UUID (found in the TA's h-file(s)) */
 #include <hello_world_ta.h>
 
+#define CPU_TA_UUID \
+	{ 0x8cc645bc, 0x1600, 0x11ed, \
+		{ 0x86, 0x1d, 0x02, 0x42, 0xac, 0x12, 0x00, 0x02} }
+
 int main(void)
 {
 	TEEC_Result res;
 	TEEC_Context ctx;
 	TEEC_Session sess;
 	TEEC_Operation op;
-	TEEC_UUID uuid = TA_HELLO_WORLD_UUID;
+	TEEC_UUID uuid = CPU_TA_UUID;
 	uint32_t err_origin;
 
 	/* Initialize a context connecting us to the TEE */
