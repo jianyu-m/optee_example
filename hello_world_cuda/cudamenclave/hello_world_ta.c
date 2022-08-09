@@ -110,7 +110,6 @@ static TEE_Result inc_value(uint32_t param_types,
 		return TEE_ERROR_BAD_PARAMETERS;
 
 	uint32_t *ecall_idx_ptr = params[0].memref.buffer;
-	DMSG("do mecall %d\n", *ecall_idx_ptr);
 
 	return rpc_entry(params[0].memref.buffer);
 }

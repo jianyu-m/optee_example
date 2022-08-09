@@ -38,9 +38,11 @@ extern int compute();
 
 int compute_forward() {
 	TEE_UUID uuid = CUDA_TA_UUID;
+	int ret;
 	rpc_open(&uuid);
-	compute();
+	ret = compute();
 	rpc_close();
+	return ret;
 }
 
 int compute2() {
