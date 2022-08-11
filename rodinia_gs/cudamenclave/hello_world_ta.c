@@ -118,7 +118,7 @@ static TEE_Result inc_value(uint32_t param_types,
 
 	uint32_t *ecall_idx_ptr = params[0].memref.buffer;
 
-	return rpc_entry(params[0].memref.buffer);
+	return rpc_entry(params[0].memref.buffer, params[0].memref.size);
 }
 
 static TEE_Result dec_value(uint32_t param_types,
