@@ -30,10 +30,9 @@
 
 #include <hello_world_ta.h>
 
+#include <rpc/rpc.h>
 #include <sys/mman.h>
 #include <string.h>
-
-#include "rpc/rpc.h"
 
 extern int compute();
 /*

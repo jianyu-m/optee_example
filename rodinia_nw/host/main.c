@@ -41,7 +41,7 @@ int main(void)
 	TEEC_Context ctx;
 	TEEC_Session sess;
 	TEEC_Operation op;
-	TEEC_UUID uuid = TA_HELLO_WORLD_UUID;
+	TEEC_UUID uuid = CPU_TA_UUID;
 	uint32_t err_origin;
 
 	/* Initialize a context connecting us to the TEE */

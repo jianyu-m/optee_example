@@ -9,12 +9,7 @@ global-incdirs-y += include/cxxabi
 global-incdirs-y += include/muslc
 global-incdirs-y += include/muslc-arch
 
-libnames += drm
-libnames += gdev
-libnames += cxx
-
-subdirs-y += gdev-cuda/cuda/
-subdirs-y += gdev-cuda/cuda/runtime/cudarpcs
+include ../../cudaenclave.mk
 
 # To remove a certain compiler flag, add a line like this
 #cflags-template_ta.c-y += -Wno-strict-prototypes
