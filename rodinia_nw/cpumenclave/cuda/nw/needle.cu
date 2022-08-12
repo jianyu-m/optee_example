@@ -7,6 +7,8 @@
 #include <cuda.h>
 #include <sys/time.h>
 
+#include <tee_debug.h>
+
 // includes, kernels
 #include "needle_kernel.cu"
 
@@ -140,6 +142,9 @@ void needle_runTest( int argc, char** argv)
 
 
     size = max_cols * max_rows;
+
+	TEE_TIME_START;
+
 	cudaMalloc((void**)& referrence_cuda, sizeof(int)*size);
 	cudaMalloc((void**)& matrix_cuda, sizeof(int)*size);
 	
@@ -237,6 +242,6 @@ void needle_runTest( int argc, char** argv)
 	free(referrence);
 	free(input_itemsets);
 	free(output_itemsets);
-	
+	TEE_TIME_END;
 }
 

@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <tee_debug.h>
 #include <math.h>
 #include "backprop.h"
 #include "omp.h"
@@ -25,7 +26,9 @@ backprop_face()
   load(net);
   //entering the training kernel, only one iteration
   printf("Starting training kernel\n");
+  TEE_TIME_START;
   bpnn_train_cuda(net, &out_err, &hid_err);
+  TEE_TIME_END;
   bpnn_free(net);
   printf("Training done\n");
 }

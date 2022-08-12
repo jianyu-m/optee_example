@@ -18,6 +18,7 @@
 #include "cuda.h"
 #include <string.h>
 #include <math.h>
+#include <tee_debug.h>
 
 #ifdef RD_WG_SIZE_0_0
         #define MAXBLOCKSIZE RD_WG_SIZE_0_0
@@ -162,7 +163,9 @@ extern "C" int gaussian_main(int argc, char *argv[])
     gettimeofday(&time_start, NULL);	
     
     // run kernels
+	TEE_TIME_START;
     ForwardSub();
+	TEE_TIME_END;
     
     //end timing
     struct timeval time_end;

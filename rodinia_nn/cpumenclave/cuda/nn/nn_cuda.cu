@@ -10,6 +10,8 @@
 #include "cuda.h"
 #include "nn.hpp"
 
+#include <tee_debug.h>
+
 #define min( a, b )			a > b ? b : a
 #define ceilDiv( a, b )		( a + b - 1 ) / b
 #define print( x )			printf( #x ": %lu\n", (unsigned long) x )
@@ -84,7 +86,7 @@ extern "C" int nn_main(int argc, char* argv[])
 	LatLong *d_locations;
 	float *d_distances;
 
-
+  TEE_TIME_START;
 	// Scaling calculations - added by Sam Kauffman
 	cudaDeviceProp deviceProp;
 	cudaGetDeviceProperties( &deviceProp, 0 );
@@ -155,6 +157,7 @@ extern "C" int nn_main(int argc, char* argv[])
     //Free memory
 	cudaFree(d_locations);
 	cudaFree(d_distances);
+  TEE_TIME_END;
   return 0;
 }
 

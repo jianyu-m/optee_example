@@ -1,7 +1,7 @@
 CFG_TEE_TA_LOG_LEVEL ?= 4
 
 # The UUID for the Trusted Application
-BINARY=e8334c54-1143-11eb-9a03-0242ac130003
+BINARY=74045274-1a0d-11ed-861d-0242ac120002
 
 -include $(TA_DEV_KIT_DIR)/mk/ta_dev_kit.mk
 

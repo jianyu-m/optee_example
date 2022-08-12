@@ -11,6 +11,8 @@
 // includes, kernels
 #include "srad_kernel.cu"
 
+#include <tee_debug.h>
+
 void random_matrix(float *I, int rows, int cols);
 void srad_runTest( int argc, char** argv);
 void srad_usage(int argc, char **argv)
@@ -126,7 +128,7 @@ srad_runTest( int argc, char** argv)
 #endif
 
 #ifdef GPU
-
+	TEE_TIME_START;
 	//Allocate device memory
     cudaMalloc((void**)& J_cuda, sizeof(float)* size_I);
     cudaMalloc((void**)& C_cuda, sizeof(float)* size_I);
@@ -267,7 +269,7 @@ srad_runTest( int argc, char** argv)
 	cudaFree(S_C);
 #endif 
 	free(c);
-  
+  TEE_TIME_END;
 }
 
 

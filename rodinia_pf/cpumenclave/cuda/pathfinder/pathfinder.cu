@@ -3,6 +3,8 @@
 #include <time.h>
 #include <assert.h>
 
+#include <tee_debug.h>
+
 #define BLOCK_SIZE 256
 #define STR_SIZE 256
 #define DEVICE 0
@@ -228,6 +230,8 @@ void pathfinder_run(int argc, char** argv)
     int *gpuWall, *gpuResult[2];
     int size = rows*cols;
 
+    TEE_TIME_START;
+
     cudaMalloc((void**)&gpuResult[0], sizeof(int)*cols);
     cudaMalloc((void**)&gpuResult[1], sizeof(int)*cols);
     cudaMemcpy(gpuResult[0], data, sizeof(int)*cols, cudaMemcpyHostToDevice);
@@ -266,5 +270,6 @@ void pathfinder_run(int argc, char** argv)
     delete [] wall;
     delete [] result;
 
+    TEE_TIME_END;
 }
 

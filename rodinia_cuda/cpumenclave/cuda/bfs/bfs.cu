@@ -20,6 +20,7 @@
 #include <string.h>
 #include <math.h>
 #include <cuda.h>
+#include <tee_debug.h>
 
 #define MAX_THREADS_PER_BLOCK 256
 
@@ -133,6 +134,7 @@ void BFSGraph( int argc, char** argv)
 
 	printf("Read File\n");
 
+	TEE_TIME_START;
 	//Copy the Node list to device memory
 	Node* d_graph_nodes;
 	cudaMalloc( (void**) &d_graph_nodes, sizeof(Node)*no_of_nodes) ;
@@ -229,4 +231,5 @@ void BFSGraph( int argc, char** argv)
 	cudaFree(d_updating_graph_mask);
 	cudaFree(d_graph_visited);
 	cudaFree(d_cost);
+	TEE_TIME_END;
 }

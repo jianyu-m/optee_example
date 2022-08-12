@@ -87,7 +87,7 @@ int main(void)
 	if (res != TEEC_SUCCESS)
 		errx(1, "TEEC_InvokeCommand failed with code 0x%x origin 0x%x",
 			res, err_origin);
-	printf("CUDA Result is %d\n", op.params[0].value.a);
+	printf("Benchmark takes %d.%d s\n", op.params[0].value.a, op.params[0].value.b);
 
 	/*
 	 * We're done with the TA, close the session and

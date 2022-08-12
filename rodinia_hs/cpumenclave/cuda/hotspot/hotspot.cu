@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <assert.h>
+#include <tee_debug.h>
 
 #ifdef RD_WG_SIZE_0_0                                                            
         #define BLOCK_SIZE RD_WG_SIZE_0_0                                        
@@ -317,6 +318,8 @@ void hotspot_run(int argc, char** argv)
     readinput(FilesavingTemp, grid_rows, grid_cols, tfile);
     readinput(FilesavingPower, grid_rows, grid_cols, pfile);
 
+    TEE_TIME_START;
+
     float *MatrixTemp[2], *MatrixPower;
     cudaMalloc((void**)&MatrixTemp[0], sizeof(float)*size);
     cudaMalloc((void**)&MatrixTemp[1], sizeof(float)*size);
@@ -336,4 +339,5 @@ void hotspot_run(int argc, char** argv)
     cudaFree(MatrixTemp[0]);
     cudaFree(MatrixTemp[1]);
     free(MatrixOut);
+    TEE_TIME_END;
 }

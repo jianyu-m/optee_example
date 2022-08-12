@@ -25,6 +25,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <tee_debug.h>
 #include <tee_internal_api.h>
 #include <tee_internal_api_extensions.h>
 
@@ -118,7 +119,9 @@ static TEE_Result inc_value(uint32_t param_types,
 		return TEE_ERROR_BAD_PARAMETERS;
 
 	IMSG("Got value: %u from NW", params[0].value.a);
-	params[0].value.a = compute();
+	compute();
+	params[0].value.a = elapsed_time_ms / 1000;
+	params[0].value.b = elapsed_time_ms % 1000;
 
 	return TEE_SUCCESS;
 }

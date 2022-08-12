@@ -22,6 +22,7 @@
 #include <getopt.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <tee_debug.h>
 
 #include "../common/common.h"
 
@@ -128,11 +129,12 @@ lud_main( int argc, char *argv[] )
     matrix_duplicate(m, &mm, matrix_dim);
   }
 
+  TEE_TIME_START;
   cudaMalloc((void**)&d_m, 
              matrix_dim*matrix_dim*sizeof(float));
 
   /* beginning of timing point */
-  stopwatch_start(&sw);
+  // stopwatch_start(&sw);
   cudaMemcpy(d_m, m, matrix_dim*matrix_dim*sizeof(float), 
 	     cudaMemcpyHostToDevice);
 
@@ -142,10 +144,11 @@ lud_main( int argc, char *argv[] )
 	     cudaMemcpyDeviceToHost);
 
   /* end of timing point */
-  stopwatch_stop(&sw);
-  printf("Time consumed(ms): %lf\n", 1000*get_interval_by_sec(&sw));
+  // stopwatch_stop(&sw);
+  // printf("Time consumed(ms): %lf\n", 1000*get_interval_by_sec(&sw));
 
   cudaFree(d_m);
+  TEE_TIME_END;
 
 
   if (do_verify){
