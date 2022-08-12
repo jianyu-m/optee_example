@@ -224,9 +224,11 @@ void pathfinder_run(int argc, char** argv)
     int smallBlockCol = BLOCK_SIZE-(pyramid_height)*HALO*2;
     int blockCols = cols/smallBlockCol+((cols%smallBlockCol==0)?0:1);
 
-    printf("pyramidHeight: %d\ngridSize: [%d]\nborder:[%d]\nblockSize: %d\nblockGrid:[%d]\ntargetBlock:[%d]\n",\
-	pyramid_height, cols, borderCols, BLOCK_SIZE, blockCols, smallBlockCol);
+    fprintf(stderr, "pyramidHeight: %d gridSize: [%d] border:[%d] blockSize: %d blockGrid:[%d] targetBlock:[%d]\n",
+	    pyramid_height, cols, borderCols, BLOCK_SIZE, blockCols, smallBlockCol);
 	
+    fprintf(stderr, "datas: %lx %lx %lx\n", data, wall, result);
+
     int *gpuWall, *gpuResult[2];
     int size = rows*cols;
 

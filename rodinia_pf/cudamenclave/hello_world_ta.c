@@ -39,7 +39,7 @@ extern int pathfinder_main(int argc, char** argv);
 
 
 int compute(void) {
-	char* argv[] = {"pf", "10000", "100", "20"};
+	char* argv[] = {"pf", "5000", "100", "20"};
 	// bp_main(0, NULL);
 	
 	
