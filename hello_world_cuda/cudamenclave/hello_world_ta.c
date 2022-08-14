@@ -34,14 +34,13 @@
 #include <sys/mman.h>
 #include <string.h>
 
-extern int compute();
 /*
  * Called when the instance of the TA is created. This is the first call in
  * the TA.
  */
 TEE_Result TA_CreateEntryPoint(void)
 {
-	
+	DMSG("has been called");
 
 	return TEE_SUCCESS;
 }
@@ -52,7 +51,7 @@ TEE_Result TA_CreateEntryPoint(void)
  */
 void TA_DestroyEntryPoint(void)
 {
-	
+	DMSG("has been called");
 }
 
 /*
@@ -70,6 +69,8 @@ TEE_Result TA_OpenSessionEntryPoint(uint32_t param_types,
 						   TEE_PARAM_TYPE_NONE,
 						   TEE_PARAM_TYPE_NONE);
 
+	DMSG("has been called");
+
 	if (param_types != exp_param_types)
 		return TEE_ERROR_BAD_PARAMETERS;
 
@@ -81,7 +82,7 @@ TEE_Result TA_OpenSessionEntryPoint(uint32_t param_types,
 	 * The DMSG() macro is non-standard, TEE Internal API doesn't
 	 * specify any means to logging from a TA.
 	 */
-	// IMSG("Hello World!\n");
+	IMSG("Hello World!\n");
 
 	/* If return value != TEE_SUCCESS the session will not be created. */
 	return TEE_SUCCESS;
@@ -94,23 +95,15 @@ TEE_Result TA_OpenSessionEntryPoint(uint32_t param_types,
 void TA_CloseSessionEntryPoint(void __maybe_unused *sess_ctx)
 {
 	(void)&sess_ctx; /* Unused parameter */
-	// IMSG("Goodbye!\n");
+	IMSG("Goodbye!\n");
 }
 
 static TEE_Result inc_value(uint32_t param_types,
 	TEE_Param params[4])
 {
-	uint32_t exp_param_types = TEE_PARAM_TYPES(TEE_PARAM_TYPE_MEMREF_INOUT,
-						   TEE_PARAM_TYPE_NONE,
-						   TEE_PARAM_TYPE_NONE,
-						   TEE_PARAM_TYPE_NONE);
-
-	if (param_types != exp_param_types)
-		return TEE_ERROR_BAD_PARAMETERS;
-
 	uint32_t *ecall_idx_ptr = params[0].memref.buffer;
 
-	return rpc_entry(params[0].memref.buffer);
+	return rpc_entry(params[0].memref.buffer, params[0].memref.size);
 }
 
 static TEE_Result dec_value(uint32_t param_types,
@@ -121,7 +114,7 @@ static TEE_Result dec_value(uint32_t param_types,
 						   TEE_PARAM_TYPE_NONE,
 						   TEE_PARAM_TYPE_NONE);
 
-	
+	DMSG("has been called");
 
 	if (param_types != exp_param_types)
 		return TEE_ERROR_BAD_PARAMETERS;

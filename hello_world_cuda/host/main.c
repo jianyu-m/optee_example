@@ -25,9 +25,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define _GNU_SOURCE
+
 #include <err.h>
 #include <stdio.h>
 #include <string.h>
+
+#include <pthread.h>
+#include <sched.h>
 
 /* OP-TEE TEE client API (built by optee_client) */
 #include <tee_client_api.h>
@@ -35,18 +40,43 @@
 /* For the UUID (found in the TA's h-file(s)) */
 #include <hello_world_ta.h>
 
-#define CPU_TA_UUID \
-	{ 0x8cc645bc, 0x1600, 0x11ed, \
-		{ 0x86, 0x1d, 0x02, 0x42, 0xac, 0x12, 0x00, 0x02} }
+#define CPU_CORE (1)
+#define GPU_CORE (2)
 
-int main(void)
-{
+pthread_mutex_t execute_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+volatile int total_thread = 0;
+
+static void * do_concurrent_ta_call(void* args) {
 	TEEC_Result res;
 	TEEC_Context ctx;
 	TEEC_Session sess;
 	TEEC_Operation op;
-	TEEC_UUID uuid = CPU_TA_UUID;
+	TEEC_UUID cpu_uuid = CPU_TA_UUID;
+	TEEC_UUID cuda_uuid = CUDA_TA_UUID;
+	TEEC_UUID *uuid;
 	uint32_t err_origin;
+	cpu_set_t cpuset; 
+	//the CPU we whant to use
+	int cpu = (int)(long)(args);
+
+	CPU_ZERO(&cpuset);       //clears the cpuset
+	CPU_SET(cpu, &cpuset); //set CPU 2 on cpuset
+
+	if (cpu == CPU_CORE) {
+		uuid = &cpu_uuid;
+	} else {
+		uuid = &cuda_uuid;
+	}
+
+	/*
+	* cpu affinity for the calling thread 
+	* first parameter is the pid, 0 = calling thread
+	* second parameter is the size of your cpuset
+	* third param is the cpuset in which your thread will be
+	* placed. Each bit represents a CPU
+	*/
+	sched_setaffinity(0, sizeof(cpuset), &cpuset);
 
 	/* Initialize a context connecting us to the TEE */
 	res = TEEC_InitializeContext(NULL, &ctx);
@@ -57,11 +87,18 @@ int main(void)
 	 * Open a session to the "hello world" TA, the TA will print "hello
 	 * world!" in the log when the session is created.
 	 */
-	res = TEEC_OpenSession(&ctx, &sess, &uuid,
+	fprintf(stderr, "starting session\n");
+	res = TEEC_OpenSession(&ctx, &sess, uuid,
 			       TEEC_LOGIN_PUBLIC, NULL, NULL, &err_origin);
 	if (res != TEEC_SUCCESS)
 		errx(1, "TEEC_Opensession failed with code 0x%x origin 0x%x",
 			res, err_origin);
+
+	pthread_mutex_lock(&execute_mutex);
+	total_thread += 1;
+	pthread_mutex_unlock(&execute_mutex);
+
+	while (total_thread < 2);
 
 	/*
 	 * Execute a function in the TA by invoking it, in this case
@@ -86,12 +123,14 @@ int main(void)
 	 * TA_HELLO_WORLD_CMD_INC_VALUE is the actual function in the TA to be
 	 * called.
 	 */
+	fprintf(stderr, "invoking cmds\n");
 	res = TEEC_InvokeCommand(&sess, TA_HELLO_WORLD_CMD_INC_VALUE, &op,
 				 &err_origin);
 	if (res != TEEC_SUCCESS)
 		errx(1, "TEEC_InvokeCommand failed with code 0x%x origin 0x%x",
 			res, err_origin);
-	printf("CUDA Result is %d\n", op.params[0].value.a);
+	if (cpu == CPU_CORE)
+		printf("CUDA Result is %d\n", op.params[0].value.a);
 
 	/*
 	 * We're done with the TA, close the session and
@@ -104,6 +143,15 @@ int main(void)
 	TEEC_CloseSession(&sess);
 
 	TEEC_FinalizeContext(&ctx);
+}
+
+int main(void)
+{
+	pthread_t tid;
+	if (pthread_create(&tid, NULL, do_concurrent_ta_call, (void*)CPU_CORE) != 0) {
+		errx(1, "pthread_create fail");
+	}
+	do_concurrent_ta_call((void*)GPU_CORE);
 
 	return 0;
 }

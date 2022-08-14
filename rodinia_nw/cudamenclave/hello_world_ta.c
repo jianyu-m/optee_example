@@ -111,14 +111,6 @@ void TA_CloseSessionEntryPoint(void __maybe_unused *sess_ctx)
 static TEE_Result inc_value(uint32_t param_types,
 	TEE_Param params[4])
 {
-	uint32_t exp_param_types = TEE_PARAM_TYPES(TEE_PARAM_TYPE_MEMREF_INOUT,
-						   TEE_PARAM_TYPE_NONE,
-						   TEE_PARAM_TYPE_NONE,
-						   TEE_PARAM_TYPE_NONE);
-
-	if (param_types != exp_param_types)
-		return TEE_ERROR_BAD_PARAMETERS;
-
 	uint32_t *ecall_idx_ptr = params[0].memref.buffer;
 
 	return rpc_entry(params[0].memref.buffer, params[0].memref.size);
