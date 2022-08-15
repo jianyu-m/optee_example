@@ -41,7 +41,7 @@ int main(void)
 	TEEC_Context ctx;
 	TEEC_Session sess;
 	TEEC_Operation op;
-	TEEC_UUID uuid = TA_HELLO_WORLD_UUID;
+	TEEC_UUID uuid = CPU_TA_UUID;
 	uint32_t err_origin;
 
 	/* Initialize a context connecting us to the TEE */
@@ -87,7 +87,7 @@ int main(void)
 	if (res != TEEC_SUCCESS)
 		errx(1, "TEEC_InvokeCommand failed with code 0x%x origin 0x%x",
 			res, err_origin);
-	printf("CUDA Result is %d\n", op.params[0].value.a);
+	printf("DNN Training takes %d ms/batch\n", op.params[0].value.b);
 
 	/*
 	 * We're done with the TA, close the session and
