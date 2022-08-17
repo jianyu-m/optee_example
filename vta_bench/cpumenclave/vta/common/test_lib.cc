@@ -132,7 +132,10 @@ uint64_t vta(
   if (!handle)
     handle = VTADeviceAlloc();
   gettimeofday(&tvs, 0);
-  VTADeviceRun(handle, VTAMemGetPhyAddr((char*)insns), insn_count, 0);
+  void* device_inst = VTAMemAlloc(insn_count * sizeof(VTAGenericInsn), VTA_CACHED);
+  VTAMemCopyFromHost(device_inst, insns, insn_count * sizeof(VTAGenericInsn));
+  VTADeviceRun(handle, VTAMemGetPhyAddr((char*)device_inst), insn_count, 0);
+  VTAMemFree(device_inst);
   gettimeofday(&tve, 0);
   t_fpga = (tve.tv_sec - tvs.tv_sec) * 1000000000ULL + (tve.tv_usec - tvs.tv_usec) * 1000ULL;
   return t_fpga;
@@ -288,19 +291,19 @@ void free3dArray(T *** array, int rows, int cols, int depth) {
 }
 
 void * allocBuffer(size_t num_bytes) {
-#ifdef NO_SIM
-  return VTAMemAlloc(num_bytes, VTA_CACHED);
-#else
+// #ifdef NO_SIM
+//   return VTAMemAlloc(num_bytes, VTA_CACHED);
+// #else
   return malloc(num_bytes);
-#endif
+// #endif
 }
 
 void freeBuffer(void * buffer) {
-#ifdef NO_SIM
-  return VTAMemFree(buffer);
-#else
+// #ifdef NO_SIM
+//   return VTAMemFree(buffer);
+// #else
   return free(buffer);
-#endif
+// #endif
 }
 
 VTAGenericInsn get2DLoadStoreInsn(int opcode, int type, int sram_offset, int dram_offset,
@@ -497,11 +500,11 @@ VTAUop * getGEMMUops(int batch, int in_feat, int out_feat, bool uop_compression,
   if (multi_threaded) uop_size *= 2;
 
   // Allocate buffer
-#ifdef NO_SIM
-  VTAUop *uop_buf = static_cast<VTAUop *>(VTAMemAlloc(sizeof(VTAUop) * uop_size, VTA_CACHED));
-#else
+// #ifdef NO_SIM
+  // VTAUop *uop_buf = static_cast<VTAUop *>(VTAMemAlloc(sizeof(VTAUop) * uop_size, VTA_CACHED));
+// #else
   VTAUop *uop_buf = static_cast<VTAUop *>(malloc(sizeof(VTAUop) * uop_size));
-#endif
+// #endif
 
   if (!uop_compression) {
     int uop_idx = 0;
@@ -553,11 +556,11 @@ VTAUop * getMapALUUops(int vector_size, bool uop_compression) {
   int uop_size = (uop_compression) ? 1 : vector_size;
 
   // Allocate buffer
-#ifdef NO_SIM
-  VTAUop *uop_buf = static_cast<VTAUop *>(VTAMemAlloc(sizeof(VTAUop) * uop_size, VTA_CACHED));
-#else
+// #ifdef NO_SIM
+  // VTAUop *uop_buf = static_cast<VTAUop *>(VTAMemAlloc(sizeof(VTAUop) * uop_size, VTA_CACHED));
+// #else
   VTAUop *uop_buf = static_cast<VTAUop *>(malloc(sizeof(VTAUop) * uop_size));
-#endif
+// #endif
 
   if (!uop_compression) {
     for (int i = 0; i < vector_size; i++) {
