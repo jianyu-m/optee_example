@@ -12,7 +12,7 @@ global-incdirs-y += include/muslc-arch
 
 cxxflags-y += -include vta/vtaconfig.h
 
-include ../../vtacenclave.mk
+include ../../vtaenclave.mk
 
 # To remove a certain compiler flag, add a line like this
 #cflags-template_ta.c-y += -Wno-strict-prototypes

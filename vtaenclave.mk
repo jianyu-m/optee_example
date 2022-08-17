@@ -1,5 +1,6 @@
 
 libnames += cxx
-# libnames += rpcs
+libnames += rpcs
 
 subdirs-y += tvm-vta
+subdirs-y += tvm-vta/src/vtarpcs
