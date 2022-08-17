@@ -40,7 +40,7 @@ extern int lud_main( int argc, char *argv[]);
 int compute(void) {
 	// cuda/lud_cuda -s 256 -v
 	char* argv[] = {"lud", "-i", "/rodinia/lud/2048.dat"};
-	RPC_CLIENT_INIT_RET(lud_main, 16);
+	RPC_CLIENT_INIT_RET(lud_main, 32);
 }
 /*
  * Called when the instance of the TA is created. This is the first call in
